@@ -71,16 +71,36 @@ int Convolution::load_model(const ModelBin& mb)
     if (dynamic_weight)
         return 0;
 
+    printf("weight_data_size=%d\n", weight_data_size);
+
     weight_data = mb.load(weight_data_size, 0);
-    if (weight_data.empty())
+    if (weight_data.empty()) {
+        printf("load Convolution weight_data failed!\n");
         return -100;
+    }
+    printf("weight_data: w=%d, h=%d, d=%d, c=%d, total=%d\n", weight_data.w, weight_data.h, weight_data.d, weight_data.c, weight_data.total());
+        
+    printf("weight_data: %p\n", weight_data.data);
+    // float* rptr = (float*)weight_data.data;
+    // for (int i = 0; i < weight_data.total(); i++)
+    // {
+    //     printf("wt:%d: %f\n", i, rptr[i]);
+    // }
 
     if (bias_term)
     {
         bias_data = mb.load(num_output, 1);
         if (bias_data.empty())
             return -100;
+
+        // float* rptr = (float*)bias_data.data;
+        // for (int i = 0; i < bias_data.total(); i++)
+        // {
+        //     printf("bias:%d: %f\n", i, rptr[i]);
+        // }
     }
+
+    
 
 #if NCNN_INT8
     if (int8_scale_term)

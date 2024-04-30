@@ -266,7 +266,7 @@ protected:
     friend Extractor Net::create_extractor() const;
     Extractor(const Net* net, size_t blob_count);
 
-private:
+public:
     ExtractorPrivate* const d;
 };
 
