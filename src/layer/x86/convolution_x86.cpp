@@ -514,6 +514,9 @@ int Convolution_x86::destroy_pipeline(const Option& opt)
 
 int Convolution_x86::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
 {
+  
+    
+
 #if NCNN_INT8
     if (opt.use_int8_inference && int8_scale_term)
     {
@@ -598,6 +601,12 @@ int Convolution_x86::forward(const Mat& bottom_blob, Mat& top_blob, const Option
     top_blob.create(outw, outh, num_output / out_elempack, out_elemsize, out_elempack, opt.blob_allocator);
     if (top_blob.empty())
         return -100;
+
+    printf("Convolution_x86: %s bottom_blob(w=%d, h=%d, d=%d, c=%d), top_blob(w=%d, h=%d, d=%d, c=%d), \n", 
+        name.c_str(), 
+        bottom_blob.w, bottom_blob.h, bottom_blob.d, bottom_blob.c, 
+        top_blob.w, top_blob.h, top_blob.d, top_blob.c);
+
 
     if (!opt.use_packing_layout && kernel_w == kernel_h && dilation_w != 1 && dilation_h == dilation_w && stride_w == 1 && stride_h == 1)
     {
@@ -807,11 +816,13 @@ int Convolution_x86::forward(const Mat& bottom_blob, Mat& top_blob, const Option
 
     convolution_packed(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, kernel_w, kernel_h, dilation_w, dilation_h, stride_w, stride_h, activation_type, activation_params, opt);
 
+    
     return 0;
 }
 
 int Convolution_x86::forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt) const
 {
+    printf("int Convolution_x86::forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt) const\n");
     const Mat& bottom_blob = bottom_blobs[0];
     const Mat& _weight_data = bottom_blobs[1];
     Mat& top_blob = top_blobs[0];

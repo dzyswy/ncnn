@@ -65,11 +65,35 @@ int Deconvolution::load_model(const ModelBin& mb)
     if (weight_data.empty())
         return -100;
 
+    int wt_size = weight_data.total();
+    printf("const float %s_weight_data[%d] = {\n", name.c_str(), wt_size);
+    float* weight_data_rptr = (float*)weight_data.data;
+    for (int i = 0; i < wt_size; i++)
+    {
+        printf("%f, ", weight_data_rptr[i]);
+        if ((i % 16) == 15) {
+            printf("\n");
+        }
+    }
+    printf("};\n");
+
     if (bias_term)
     {
         bias_data = mb.load(num_output, 1);
         if (bias_data.empty())
             return -100;
+
+        int bias_size = bias_data.total();
+        printf("const float %s_bias_data[%d] = {\n", name.c_str(), bias_size);
+        float* bias_data_rptr = (float*)bias_data.data;
+        for (int i = 0; i < bias_size; i++)
+        {
+            printf("%f, ", bias_data_rptr[i]);
+            if ((i % 16) == 15) {
+                printf("\n");
+            }
+        }
+        printf("};\n");
     }
 
     return 0;
@@ -77,6 +101,13 @@ int Deconvolution::load_model(const ModelBin& mb)
 
 static int deconvolution(const Mat& bottom_blob, Mat& top_blob, const Mat& weight_data, const Mat& bias_data, int kernel_w, int kernel_h, int stride_w, int stride_h, int dilation_w, int dilation_h, int activation_type, const Mat& activation_params, const Option& opt)
 {
+    printf("deconvolution: bottom_blob(w=%d, h=%d, d=%d, c=%d), top_blob(w=%d, h=%d, d=%d, c=%d), weight_data(w=%d, h=%d, d=%d, c=%d), bias_data(w=%d, h=%d, d=%d, c=%d), kernel_w=%d, kernel_h=%d, stride_w=%d, stride_h=%d, dilation_w=%d, dilation_h=%d\n", 
+        bottom_blob.w, bottom_blob.h, bottom_blob.d, bottom_blob.c, 
+        top_blob.w, top_blob.h, top_blob.d, top_blob.c, 
+        weight_data.w, weight_data.h, weight_data.d, weight_data.c, 
+        bias_data.w, bias_data.h, bias_data.d, bias_data.c, 
+        kernel_w, kernel_h, stride_w, stride_h, dilation_w, dilation_h);
+
     const int outw = top_blob.w;
     const int outch = top_blob.c;
 

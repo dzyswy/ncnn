@@ -75,6 +75,8 @@ public:
 
     int load_model(const DataReader& dr);
 
+    void debug_info();
+
 #if NCNN_STDIO
 #if NCNN_STRING
     // load network structure from plain param file

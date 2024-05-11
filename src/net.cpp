@@ -1402,7 +1402,8 @@ int Net::load_param(const DataReader& dr)
 #endif // NCNN_VULKAN
         if (!layer)
         {
-            layer = create_layer_cpu(layer_type);
+            layer = create_layer_naive(layer_type);//wy20240508
+            //layer = create_layer_cpu(layer_type);
         }
         if (!layer)
         {
@@ -1960,6 +1961,19 @@ int Net::load_model(const DataReader& dr)
 #endif // NCNN_VULKAN
 
     return ret;
+}
+
+void Net::debug_info()
+{
+
+
+    for (size_t i = 0; i < d->layers.size(); i++)
+    {
+        Layer* layer = d->layers[i];
+        printf("%d: %s, type=%s\n", i, layer->name.c_str(), layer->type.c_str());
+
+    }
+
 }
 
 #if NCNN_STDIO

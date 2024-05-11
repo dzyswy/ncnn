@@ -78,14 +78,21 @@ int Convolution::load_model(const ModelBin& mb)
         printf("load Convolution weight_data failed!\n");
         return -100;
     }
-    printf("weight_data: w=%d, h=%d, d=%d, c=%d, total=%d\n", weight_data.w, weight_data.h, weight_data.d, weight_data.c, weight_data.total());
+    printf("%s weight_data: w=%d, h=%d, d=%d, c=%d, total=%d\n", name.c_str(), weight_data.w, weight_data.h, weight_data.d, weight_data.c, weight_data.total());
         
-    printf("weight_data: %p\n", weight_data.data);
-    // float* rptr = (float*)weight_data.data;
-    // for (int i = 0; i < weight_data.total(); i++)
-    // {
-    //     printf("wt:%d: %f\n", i, rptr[i]);
-    // }
+
+    int wt_size = weight_data.total();
+    printf("const float %s_weight_data[%d] = {\n", name.c_str(), wt_size);
+    float* weight_data_rptr = (float*)weight_data.data;
+    for (int i = 0; i < wt_size; i++)
+    {
+        printf("%f, ", weight_data_rptr[i]);
+        if ((i % 16) == 15) {
+            printf("\n");
+        }
+    }
+    printf("};\n");
+
 
     if (bias_term)
     {
@@ -93,11 +100,17 @@ int Convolution::load_model(const ModelBin& mb)
         if (bias_data.empty())
             return -100;
 
-        // float* rptr = (float*)bias_data.data;
-        // for (int i = 0; i < bias_data.total(); i++)
-        // {
-        //     printf("bias:%d: %f\n", i, rptr[i]);
-        // }
+        int bias_size = bias_data.total();
+        printf("const float %s_bias_data[%d] = {\n", name.c_str(), bias_size);
+        float* bias_data_rptr = (float*)bias_data.data;
+        for (int i = 0; i < bias_size; i++)
+        {
+            printf("%f, ", bias_data_rptr[i]);
+            if ((i % 16) == 15) {
+                printf("\n");
+            }
+        }
+        printf("};\n");
     }
 
     
@@ -143,6 +156,13 @@ int Convolution::load_model(const ModelBin& mb)
 
 static int convolution(const Mat& bottom_blob, Mat& top_blob, const Mat& weight_data, const Mat& bias_data, int kernel_w, int kernel_h, int stride_w, int stride_h, int dilation_w, int dilation_h, int activation_type, const Mat& activation_params, const Option& opt)
 {
+    printf("convolution: bottom_blob(w=%d, h=%d, d=%d, c=%d), top_blob(w=%d, h=%d, d=%d, c=%d), weight_data(w=%d, h=%d, d=%d, c=%d), bias_data(w=%d, h=%d, d=%d, c=%d), kernel_w=%d, kernel_h=%d, stride_w=%d, stride_h=%d, dilation_w=%d, dilation_h=%d\n", 
+        bottom_blob.w, bottom_blob.h, bottom_blob.d, bottom_blob.c, 
+        top_blob.w, top_blob.h, top_blob.d, top_blob.c, 
+        weight_data.w, weight_data.h, weight_data.d, weight_data.c, 
+        bias_data.w, bias_data.h, bias_data.d, bias_data.c, 
+        kernel_w, kernel_h, stride_w, stride_h, dilation_w, dilation_h);
+
     const int w = bottom_blob.w;
     const int inch = bottom_blob.c;
 
@@ -216,6 +236,7 @@ static int convolution(const Mat& bottom_blob, Mat& top_blob, const Mat& weight_
 
 int Convolution::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
 {
+    printf("int Convolution::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const\n");
 #if NCNN_INT8
     if (opt.use_int8_inference && weight_data.elemsize == (size_t)1u)
     {
@@ -299,6 +320,7 @@ int Convolution::forward(const Mat& bottom_blob, Mat& top_blob, const Option& op
 
 int Convolution::forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt) const
 {
+    printf("int Convolution::forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt) const\n");
     const Mat& bottom_blob = bottom_blobs[0];
     const Mat& _weight_data = bottom_blobs[1];
     Mat& top_blob = top_blobs[0];

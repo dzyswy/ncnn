@@ -86,29 +86,29 @@ int main(int argc, char** argv)
     std::vector<cv::Mat> channels;
     cv::split(yuv_img, channels);
 
-    ncnn::Net net;
+    ncnn::Net net; 
     net.load_param("/work/models/FSRCNN/fsrcnn_x4.param");
     net.load_model("/work/models/FSRCNN/fsrcnn_x4.bin");
-
+    net.debug_info();
     
 
-    std::vector<ncnn::Layer*>& layers = net.mutable_layers();
-    for (int i = 0; i < layers.size(); i++)
-    {
-        ncnn::Layer* layer = layers[i];
-        printf("%d: %s, type=%s\n", i, layer->name.c_str(), layer->type.c_str());
-        // for (int j = 0; j < layer->top_shapes.size(); j++)
-        // {
-        //     ncnn::Mat& shape = layer->top_shapes[j];
-        //     printf("    top%d: w=%d, h=%d, d=%d, c=%d\n", j, shape.w, shape.h, shape.d, shape.c);
-        // }
+    // std::vector<ncnn::Layer*>& layers = net.mutable_layers();
+    // for (int i = 0; i < layers.size(); i++)
+    // {
+    //     ncnn::Layer* layer = layers[i];
+    //     printf("%d: %s, type=%s\n", i, layer->name.c_str(), layer->type.c_str());
+    //     // for (int j = 0; j < layer->top_shapes.size(); j++)
+    //     // {
+    //     //     ncnn::Mat& shape = layer->top_shapes[j];
+    //     //     printf("    top%d: w=%d, h=%d, d=%d, c=%d\n", j, shape.w, shape.h, shape.d, shape.c);
+    //     // }
 
-        // for (int j = 0; j < layer->bottom_shapes.size(); j++)
-        // {
-        //     ncnn::Mat& shape = layer->bottom_shapes[j];
-        //     printf("    btm%d: w=%d, h=%d, d=%d, c=%d\n", j, shape.w, shape.h, shape.d, shape.c);
-        // }
-    }
+    //     // for (int j = 0; j < layer->bottom_shapes.size(); j++)
+    //     // {
+    //     //     ncnn::Mat& shape = layer->bottom_shapes[j];
+    //     //     printf("    btm%d: w=%d, h=%d, d=%d, c=%d\n", j, shape.w, shape.h, shape.d, shape.c);
+    //     // }
+    // }
     
 
 
@@ -127,17 +127,17 @@ int main(int argc, char** argv)
     ex.extract(fsrcnn_x4_param_id::BLOB_52, out);
 
 
-    ncnn::Deconvolution* conv1 = (ncnn::Deconvolution*)net.mutable_layers()[15];
-    printf("type=%s, name=%s, num_output=%d, kernel_w=%d, kernel_h=%d\n", conv1->type.c_str(), conv1->name.c_str(), conv1->num_output, conv1->kernel_w, conv1->kernel_h);
-    printf("weight_data: w=%d, h=%d, d=%d, c=%d, total=%d\n", conv1->weight_data.w, conv1->weight_data.h, conv1->weight_data.d, conv1->weight_data.c, conv1->weight_data.total());
-    printf("bias_data: w=%d, h=%d, d=%d, c=%d\n", conv1->bias_data.w, conv1->bias_data.h, conv1->bias_data.d, conv1->bias_data.c);
+    // ncnn::Deconvolution* conv1 = (ncnn::Deconvolution*)net.mutable_layers()[15];
+    // printf("type=%s, name=%s, num_output=%d, kernel_w=%d, kernel_h=%d\n", conv1->type.c_str(), conv1->name.c_str(), conv1->num_output, conv1->kernel_w, conv1->kernel_h);
+    // printf("weight_data: w=%d, h=%d, d=%d, c=%d, total=%d\n", conv1->weight_data.w, conv1->weight_data.h, conv1->weight_data.d, conv1->weight_data.c, conv1->weight_data.total());
+    // printf("bias_data: w=%d, h=%d, d=%d, c=%d\n", conv1->bias_data.w, conv1->bias_data.h, conv1->bias_data.d, conv1->bias_data.c);
 
-    printf("wt0:%f\n", conv1->bias_data[0]);
+    // printf("wt0:%f\n", conv1->bias_data[0]);
 
-    if (conv1->weight_data.empty()) {
-        printf("Convolution weight_data empty!\n");
-    }
-    printf("weight_data: %p\n", conv1->weight_data.data);
+    // if (conv1->weight_data.empty()) {
+    //     printf("Convolution weight_data empty!\n");
+    // }
+    // printf("weight_data: %p\n", conv1->weight_data.data);
 
 
     // std::vector<ncnn::Blob> blobs = net.mutable_blobs();

@@ -44,6 +44,7 @@ if(NCNN_PIXEL)
 
         ncnn_add_example(alexnet)
         ncnn_add_example(fsrcnn)
+        ncnn_add_example(sesr)
         ncnn_add_example(squeezenet)
         ncnn_add_example(squeezenet_c_api)
         ncnn_add_example(fasterrcnn)

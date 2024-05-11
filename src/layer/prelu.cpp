@@ -35,6 +35,18 @@ int PReLU::load_model(const ModelBin& mb)
     if (slope_data.empty())
         return -100;
 
+    int slope_size = slope_data.total();
+    printf("const float %s_slope_data[%d] = {\n", name.c_str(), slope_size);
+    float* slope_data_rptr = (float*)slope_data.data;
+    for (int i = 0; i < slope_size; i++)
+    {
+        printf("%f, ", slope_data_rptr[i]);
+        if ((i % 16) == 15) {
+            printf("\n");
+        }
+    }
+    printf("};\n");
+
     return 0;
 }
 
