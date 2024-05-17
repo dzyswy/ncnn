@@ -1402,8 +1402,8 @@ int Net::load_param(const DataReader& dr)
 #endif // NCNN_VULKAN
         if (!layer)
         {
-            layer = create_layer_naive(layer_type);//wy20240508
-            //layer = create_layer_cpu(layer_type);
+            //layer = create_layer_naive(layer_type);//wy20240508
+            layer = create_layer_cpu(layer_type);
         }
         if (!layer)
         {
